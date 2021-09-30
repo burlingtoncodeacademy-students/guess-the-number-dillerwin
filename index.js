@@ -113,7 +113,7 @@ async function start() {
         guess = Math.floor((max + min) / 2);
         //guess = randNum(min, max)
         //console.log(await guess);
-        if (reply <= guess) {
+        if (max <= reply) {
           reply = await ask(`Are you sure?\n>_`);
         } else {
           reply = await ask(`Is your number ${await guess}?\n>_`);
