@@ -19,7 +19,7 @@ async function start() {
     //console.log(num);
   }
   console.log(
-    `Let's play a game where you (human) make up a number between 1 and 100 and I (computer) try to guess it.`
+    `Let's play a game where you (human) make up a number between 1 and 100 and I (computer) try to guess it.\nAs a heads up, I am pretty literal and if you don't capitalize your words I might now understand!`
   );
   let reply = await ask(
     `\nHave you thought of a number between 1 and 10? (Yes or No)\n>_`
@@ -103,19 +103,20 @@ async function start() {
     //absolute end of the program
     // process.exit();
   }
-  let num = randNum();
-  reply = await ask(`Is your number ${(await num).toString()}?\n>_`);
+  let guess = randNum(min, max);
+  reply = await ask(`Is your number ${(await guess).toString()}?\n>_`);
   while (reply === `No`) {
-    reply = await ask(`Was my guess higher or lower than your number?\n>_`);
-    if (reply !== `Yes` || `No`) {
+    reply = await ask(`Was my guess Higher or Lower than your number?\n>_`);
+    if (reply !== `Higher` && `Lower`) {
       reply = await ask(
-        `Sorry, I didn't catch that.\nWas my guess higher or lower than your number? (Yes or No)\n>_`
+        `Sorry, I didn't catch that.\nWas my guess Higher or Lower than your number?\n>_`
       );
     } else {
-      if (reply.toLowerCase().includes(`higher`)) {
-        let min = num;
-        randNum();
-        reply = await ask(`Is your number ${(await num).toString()}?\n>_`);
+      if (reply === `Higher`) {
+        let min = guess;
+        randNum(min, max);
+        //console.log(guess);
+        reply = await ask(`Is your number ${(await guess).toString()}?\n>_`);
       } else {
         if (reply.toLowerCase().includes(`lower`)) {
         }
