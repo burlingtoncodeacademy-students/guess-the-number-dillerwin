@@ -8,12 +8,11 @@ function ask(questionText) {
 }
 
 start();
-
+let min = 1;
+let max = 10;
 async function start() {
   //random number generator
-  let min = 0;
-  let max = 10;
-  async function randNum() {
+  async function randNum(min, max) {
     let range = max - min + 1;
     let num = Math.floor(Math.random() * range) + min;
     return num;
@@ -86,8 +85,7 @@ async function start() {
         }
       }
     }
-    let num = randNum();
-    console.log(`Is your number ${(await num).toString()}?`);
+    break;
 
     //need program to make a guess
     //((max + min)/2) will give middle ground number to guess
@@ -104,5 +102,24 @@ async function start() {
 
     //absolute end of the program
     // process.exit();
+  }
+  let num = randNum();
+  reply = await ask(`Is your number ${(await num).toString()}?\n>_`);
+  while (reply === `No`) {
+    reply = await ask(`Was my guess higher or lower than your number?\n>_`);
+    if (reply !== `Yes` || `No`) {
+      reply = await ask(
+        `Sorry, I didn't catch that.\nWas my guess higher or lower than your number? (Yes or No)\n>_`
+      );
+    } else {
+      if (reply.toLowerCase().includes(`higher`)) {
+        let min = num;
+        randNum();
+        reply = await ask(`Is your number ${(await num).toString()}?\n>_`);
+      } else {
+        if (reply.toLowerCase().includes(`lower`)) {
+        }
+      }
+    }
   }
 }
