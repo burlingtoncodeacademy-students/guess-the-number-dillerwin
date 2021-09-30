@@ -24,29 +24,30 @@ async function start() {
   let reply = await ask(
     `\nHave you thought of a number between 1 and 100? (Yes or No)\n>_`
   );
-  while (reply !== `Yes`) {
-    if (reply === `No`) {
+  //console.log(reply.toString().toLowerCase());
+  while (reply.toString().toLowerCase() !== `yes`) {
+    if (reply.toString().toLowerCase() === `no`) {
       break;
     } else {
       reply = await ask(
         `Sorry, I didn't catch that. Let's try again:\nHave you thought of a number between 1 and 10? (Yes or No)\n>_`
       );
-      if (reply === `Yes`) {
+      if (reply === `yes`) {
         console.log(`Awesome!`);
         break;
       } else {
-        if (reply === `No`) {
+        if (reply === `no`) {
           break;
         }
       }
     }
   }
-  while (reply === `Yes` || `No`) {
-    while (reply === `No`) {
+  while (reply === `yes` || `no`) {
+    while (reply === `no`) {
       let count = 0;
       while (count < 4) {
         count += 1;
-        if (reply === `Yes`) {
+        if (reply === `yes`) {
           console.log(`Awesome!\n`);
           break;
         } else {
@@ -66,14 +67,14 @@ async function start() {
                   reply = await ask(
                     `Okay, come one, we don't have all day.\n>_`
                   );
-                  if (reply === `Yes`) {
+                  if (reply === `yes`) {
                     console.log(`Awesome!`);
                     let secretNumber = await ask(
                       `\n So then, what's your secret number?\n>_`
                     );
                     break;
                   } else {
-                    if (reply === `No`) {
+                    if (reply === `no`) {
                       console.log(`Well fine, be that way`);
                       process.exit();
                     }
@@ -97,43 +98,44 @@ async function start() {
     //need program to adjust randNum range, using number guessed as new min/max depending on user input
 
     //need anti-cheat???
-
-    //Now try and complete the program.
   }
+
   let guess = randNum(min, max);
   reply = await ask(`Is your number ${await guess}?\n>_`);
-
-  while (reply !== `Yes` && `No`) {
-    while (reply === `No`) {
-      //console.log(`${min}, ${max}`)
+  while ((reply.toString().toLowerCase()) === `yes` || `no`) {
+    if ((reply.toString().toLowerCase()) === `no`) {
       reply = await ask(`Is my guess Higher or Lower than your number?\n>_`);
-      // if (reply !== `Higher` && `Lower`) {
-      //   //catching edges
-      //   reply = await ask(
-      //     `Sorry, I didn't catch that.\nWas my guess Higher or Lower than your number?\n>_`
-      //   );
-      //}
       //need program to redefine randNum parameters
-      while (reply === `Higher`) {
+      while (reply.toString().toLowerCase() === `higher`) {
         max = guess;
         // console.log(guess);
         // console.log(max);
         guess = Math.floor((max + min) / 2);
         //guess = randNum(min, max)
-        console.log(await guess);
-        reply = await ask(`Is your number ${await guess}?\n>_`);
+        //console.log(await guess);
+        if (reply <= guess) {
+          reply = await ask(`Are you sure?\n>_`);
+        } else {
+          reply = await ask(`Is your number ${await guess}?\n>_`);
+        }
       }
-      while (reply === `Lower`) {
+      while (reply.toString().toLowerCase() === `lower`) {
         min = guess;
         guess = Math.floor((max + min) / 2);
-        console.log(await guess);
+        //console.log(await guess);
         reply = await ask(`Is your number ${await guess}?\n>_`);
       }
+    } else {
+      console.log(`I did it!`);
+      process.exit();
     }
-    // while (reply !== `Yes`) {
-    //   reply = await ask(
-    //     `Sorry, I didn't catch that. Is my guess Higher or Lower than your number?\n>_`
-    //   );
-    //}
   }
+  if (reply !== `yes`) {
+    reply = await ask(
+      `I'm not sure I got that, is your number Higher or Lower?\n>_`
+    );
+  } else {
+    console.log(`I did it!`);
+  }
+  process.exit();
 }
