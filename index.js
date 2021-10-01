@@ -1,3 +1,7 @@
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 const readline = require(`readline`);
 const rl = readline.createInterface(process.stdin, process.stdout);
 
@@ -51,12 +55,14 @@ async function start() {
               console.log(`Don't worry, I can wait...`);
             } else {
               if (count === 2) {
+                await sleep(500);
                 reply = await ask(
                   `Do you have a number between 1 and 10 now?\n>_`
                 );
               } else {
                 if (count === 3) {
                   console.log(`No problem, I promise I'm patient...`);
+                  await sleep (1000);
                   reply = await ask(`How about now?\n>_`);
                 } else {
                   if (count === 4) {
