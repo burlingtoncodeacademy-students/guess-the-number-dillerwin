@@ -24,11 +24,9 @@ async function start() {
   let reply = await ask(
     `\nHave you thought of a number between 1 and 100? (Yes or No)\n>_`
   );
-  //console.log(reply.toString().toLowerCase());
+  //console.log(`Hello, I am here`);
   while (reply.toString().toLowerCase() !== `yes`) {
-    if (reply.toString().toLowerCase() === `no`) {
-      break;
-    } else {
+    if (reply.toString().toLowerCase() !== `no`) {
       reply = await ask(
         `Sorry, I didn't catch that. Let's try again:\nHave you thought of a number between 1 and 10? (Yes or No)\n>_`
       );
@@ -40,43 +38,42 @@ async function start() {
           break;
         }
       }
-    }
-  }
-  while (reply === `yes` || `no`) {
-    while (reply === `no`) {
-      let count = 0;
-      while (count < 4) {
-        count += 1;
-        if (reply === `yes`) {
-          console.log(`Awesome!\n`);
-          break;
-        } else {
-          if (count === 1) {
-            console.log(`Don't worry, I can wait...`);
+    } else {
+      if (reply.toLowerCase() === `no`) {
+        let count = 0;
+        while (count < 4) {
+          count += 1;
+          if (reply === `yes`) {
+            console.log(`Awesome!\n`);
+            break;
           } else {
-            if (count === 2) {
-              reply = await ask(
-                `Do you have a number between 1 and 10 now?\n>_`
-              );
+            if (count === 1) {
+              console.log(`Don't worry, I can wait...`);
             } else {
-              if (count === 3) {
-                console.log(`No problem, I promise I'm patient...`);
-                reply = await ask(`How about now?\n>_`);
+              if (count === 2) {
+                reply = await ask(
+                  `Do you have a number between 1 and 10 now?\n>_`
+                );
               } else {
-                if (count === 4) {
-                  reply = await ask(
-                    `Okay, come one, we don't have all day.\n>_`
-                  );
-                  if (reply === `yes`) {
-                    console.log(`Awesome!`);
-                    let secretNumber = await ask(
-                      `\n So then, what's your secret number?\n>_`
+                if (count === 3) {
+                  console.log(`No problem, I promise I'm patient...`);
+                  reply = await ask(`How about now?\n>_`);
+                } else {
+                  if (count === 4) {
+                    reply = await ask(
+                      `Okay, come one, we don't have all day.\n>_`
                     );
-                    break;
-                  } else {
-                    if (reply === `no`) {
-                      console.log(`Well fine, be that way`);
-                      process.exit();
+                    if (reply === `yes`) {
+                      console.log(`Awesome!`);
+                      let secretNumber = await ask(
+                        `\n So then, what's your secret number?\n>_`
+                      );
+                      break;
+                    } else {
+                      if (reply.toLowerCase() === `no`) {
+                        console.log(`Well fine, be that way`);
+                        process.exit();
+                      }
                     }
                   }
                 }
@@ -102,8 +99,8 @@ async function start() {
 
   let guess = randNum(min, max);
   reply = await ask(`Is your number ${await guess}?\n>_`);
-  while ((reply.toString().toLowerCase()) === `yes` || `no`) {
-    if ((reply.toString().toLowerCase()) === `no`) {
+  while (reply.toString().toLowerCase() === `yes` || `no`) {
+    if (reply.toString().toLowerCase() === `no`) {
       reply = await ask(`Is my guess Higher or Lower than your number?\n>_`);
       //need program to redefine randNum parameters
       while (reply.toString().toLowerCase() === `higher`) {
