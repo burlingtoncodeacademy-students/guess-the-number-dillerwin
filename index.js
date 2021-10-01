@@ -72,9 +72,9 @@ async function start() {
                         );
                         if (reply === `yes`) {
                           console.log(`Awesome!`);
-                          // let secretNumber = await ask(
-                          //   `\n So then, what's your secret number?\n>_`
-                          // );
+                          let secretNumber = await ask(
+                            `\n So then, what's your secret number?\n>_`
+                          );
                           break;
                         } else {
                           if (reply.toLowerCase() === `no`) {
