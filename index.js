@@ -1,43 +1,57 @@
+// delay function
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// readline (just works, don't ask questions)
 const { SSL_OP_LEGACY_SERVER_CONNECT } = require("constants");
 const readline = require(`readline`);
 const rl = readline.createInterface(process.stdin, process.stdout);
 
+// ask function
 function ask(questionText) {
   return new Promise((resolve, reject) => {
     rl.question(questionText, resolve);
   });
 }
 
+// random number generator
 function randNum(min, max) {
   let range = max - min + 1;
   let num = Math.floor(Math.random() * range) + min;
   return num;
 }
 
+// guessing game as a whole
 start();
-let min = 1;
-let max = 100;
+
 async function start() {
   //random number generator
-  //console.log(num);
+  let min = 1;
   console.log(
-    `Let's play a game where you (human) make up a number between 1 and 100 and I (computer) try to guess it.\nAs a heads up, I am pretty literal and if you don't capitalize your words I might now understand!`
+    `Let's play a game where you (human) make up a number and I (computer) try to guess it!`
   );
+  //here is where I put the range adjuster
+  let maxInit = await ask(`\nWhat do you want our range to be?`);
+  let max = parseFloat(maxInit);
+  while (isNaN(maxInit)) {
+    maxInit = await ask(`Sorry, can you please enter a number?`);
+    max = parseFloat(maxInit);
+  }
+  // assigning reply, beginning initial questions
   let reply = await ask(
-    `\nHave you thought of a number between 1 and 100? (Yes or No)\n>_`
+    `\nHave you thought of a number between 1 and ${max}? (Yes or No)\n>_`
   );
   //console.log(`Hello, I am here`);
   if (reply.toLowerCase() !== `yes`) {
     //console.log(`I am Sam`);
     if (reply.toLowerCase() !== `no`) {
+      //catch for non yes/no answers/miskeys
       reply = await ask(
         `Sorry, I didn't catch that. Let's try again:\nHave you thought of a number between 1 and 10? (Yes or No)\n>_`
       );
     } else {
+      // sarcastic ragequit
       while (reply === `no`) {
         //console.log(`Sam I am`);
         if (reply.toLowerCase() === `yes`) {
@@ -100,35 +114,23 @@ async function start() {
           }
         }
       }
-
-      //need program to console.log guess and ask if that is right
-
-      //need user to input if their number is higher or lower (be clear!!!)
-
-      //need program to adjust randNum range, using number guessed as new min/max depending on user input
-
-      //need anti-cheat???
     }
+    //exit to actual guessing game
     if (reply.toLowerCase() === `yes`) console.log(`Awesome!`);
     //break;
   }
 
   let numGuess = 0;
   let guess = randNum(min, max);
-  console.log(`I am Sam`);
+  //console.log(`I am Sam`);
   reply = await ask(`Is your number ${await guess}?\n>_`);
-  numGuess += 1;
-  // if (reply.toLowerCase() === `yes`) {
-  //   console.log(`Sam I am`);
-  //   reply = await ask(`Sorry, was your number ${await guess}? (Yes or No)\n>_`);
-  // }
+  // numGuess += 1;
   while (reply.toLowerCase() !== `yes`) {
     if (reply.toLowerCase() !== `no`) {
       console.log(`Would you like green eggs and ham?`);
       reply = await ask(
         `Sorry, I didn't catch that. Is your number ${await guess}?\n>_`
       );
-      //break;
     } else {
       break;
     }
@@ -140,14 +142,9 @@ async function start() {
   if (reply.toLowerCase() === `no`) {
     numGuess += 1;
 
-    //need program to redefine randNum parameters
-    //console.log(`I would not like green eggs and ham`);
     while (reply.toLowerCase() !== `higher` || `lower`) {
-      // reply = await ask(
-      //   `Sorry, I didn't catch that. Is your number Higher or Lower than ${await guess}?\n>_`
-      // );
       reply = await ask(`Is my guess Higher or Lower than your number?\n>_`);
-      console.log(`I would not eat it in a box`);
+      //console.log(`I would not eat it in a box`);
       if (reply.toLowerCase() === `higher`) {
         max = guess;
         guess = Math.floor((max + min) / 2);
