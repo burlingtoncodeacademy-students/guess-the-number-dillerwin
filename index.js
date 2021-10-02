@@ -44,25 +44,29 @@ async function start() {
   let reply = await ask(
     `\nHave you thought of a number between 1 and ${max}? (Yes or No)\n>_`
   );
+  // `no` throwing infinite loop?
   while (reply.toLowerCase() !== `yes`) {
-    if (reply.toLowerCase() !== `no`) {
-      //catch for non yes/no answers or miskeys
-      reply = await ask(
-        `Sorry, I didn't catch that. Let's try again:\nHave you thought of a number between 1 and ${max}? (Yes or No)\n>_`
-      );
-    //} else {
-      // sarcastic ragequit
-      while (reply === `no`) {
-        if (reply.toLowerCase() === `yes`) {
-          break;
-        } else {
-          // for people who refuse to say yes
-          while (reply.toLowerCase() === `no`) {
-            let count = 0;
-            while (count < 4) {
-              count += 1;
+    console.log(`eyyy`)
+    let count = 0;
+    if (reply.toLowerCase() === `no`) {
+      if (reply.toLowerCase() !== `no`) {
+        //catch for non yes/no answers or miskeys
+        reply = await ask(
+          `Sorry, I didn't catch that. Let's try again:\nHave you thought of a number between 1 and ${max}? (Yes or No)\n>_`
+        );
+        count += 1;
+        //} else {
+        // sarcastic ragequit
+        while (reply === `no`) {
+          if (reply.toLowerCase() === `yes`) {
+            break;
+          } else {
+            // for people who refuse to say yes
+            while (reply.toLowerCase() === `no`) {
+              while (count < 4) {
+                count += 1;
                 while (reply.toLowerCase() === `no`) {
-                  console.log(`eyo`)
+                  console.log(`eyo`);
                   if (count === 1) {
                     count += 1;
                     console.log(`Don't worry, I can wait...`);
@@ -106,6 +110,7 @@ async function start() {
                   //   console.log(`Awesome!`);
                   //   break;
                 }
+              }
             }
           }
         }
