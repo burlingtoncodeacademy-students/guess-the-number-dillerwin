@@ -2,6 +2,7 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+const { SSL_OP_LEGACY_SERVER_CONNECT } = require("constants");
 const readline = require(`readline`);
 const rl = readline.createInterface(process.stdin, process.stdout);
 
@@ -29,137 +30,151 @@ async function start() {
   let reply = await ask(
     `\nHave you thought of a number between 1 and 100? (Yes or No)\n>_`
   );
-  console.log(`Hello, I am here`);
-  while (reply.toLowerCase() !== `yes`) {
-    //console.log(`Now I am here`);
+  //console.log(`Hello, I am here`);
+  if (reply.toLowerCase() !== `yes`) {
+    //console.log(`I am Sam`);
     if (reply.toLowerCase() !== `no`) {
-      //console.log(`Next I'm here`);
       reply = await ask(
         `Sorry, I didn't catch that. Let's try again:\nHave you thought of a number between 1 and 10? (Yes or No)\n>_`
       );
-      while (reply !== `yes` || `no`) {
-        //console.log(`Now I'm here`);
+    } else {
+      while (reply === `no`) {
+        //console.log(`Sam I am`);
         if (reply.toLowerCase() === `yes`) {
-          console.log(`Awesome!`);
           break;
         } else {
-          //console.log(`You're trying to get here`);
+          //console.log(`Would you like green eggs and ham?`);
+          // for people who refuse to say yes
           while (reply.toLowerCase() === `no`) {
             let count = 0;
             while (count < 4) {
               count += 1;
-              if (reply === `yes`) {
-                console.log(`Awesome!\n`);
-                break;
-              } else {
-                if (count === 1) {
-                  console.log(`Don't worry, I can wait...`);
-                } else {
-                  if (count === 2) {
+              while (reply.toLowerCase() !== `yes`) {
+                if (reply.toLowerCase() === `no`) {
+                  //console.log(`I do not like green eggs and ham.`);
+                  if (count === 1) {
+                    count += 1;
+                    console.log(`Don't worry, I can wait...`);
                     await sleep(500);
                     reply = await ask(
-                      `Do you have a number between 1 and 100 now?\n>_`
+                      `How about now? Do you have a number between 1 and 100?\n>_`
                     );
                   } else {
-                    if (count === 3) {
-                      console.log(`No problem, I promise I'm patient...`);
+                    if (count === 2) {
                       await sleep(1000);
-                      reply = await ask(`How about now?\n>_`);
+                      count += 1;
+                      reply = await ask(
+                        `Do you have a number between 1 and 100 now?\n>_`
+                      );
                     } else {
-                      if (count === 4) {
-                        reply = await ask(
-                          `Okay, come one, we don't have all day.\nPick a number between 1 and 100.\n>_`
-                        );
-                        if (reply === `yes`) {
-                          console.log(`Awesome!`);
-                          let secretNumber = await ask(
-                            `\n So then, what's your secret number?\n>_`
+                      if (count === 3) {
+                        count += 1;
+                        console.log(`No problem, I promise I'm patient...`);
+                        await sleep(1000);
+                        reply = await ask(`How about now?\n>_`);
+                      } else {
+                        if (count === 4) {
+                          count += 1;
+                          console.log(`Okay, come one, we don't have all day.`);
+                          reply = await ask(
+                            `Did you pick a number between 1 and 100?\n>_`
                           );
-                          break;
                         } else {
                           if (reply.toLowerCase() === `no`) {
                             console.log(`Well fine, be that way`);
                             process.exit();
-                            // }
                           }
                         }
                       }
                     }
                   }
+                  // } else {
+                  //   break;
+                  // }
+                  // if (reply.toLowerCase() === `yes`) {
+                  //   console.log(`Awesome!`);
+                  //   break;
                 }
               }
             }
           }
         }
       }
+
+      //need program to console.log guess and ask if that is right
+
+      //need user to input if their number is higher or lower (be clear!!!)
+
+      //need program to adjust randNum range, using number guessed as new min/max depending on user input
+
+      //need anti-cheat???
     }
-    break;
-
-    //need program to make a guess
-    //((max + min)/2) will give middle ground number to guess
-
-    //need program to console.log guess and ask if that is right
-
-    //need user to input if their number is higher or lower (be clear!!!)
-
-    //need program to adjust randNum range, using number guessed as new min/max depending on user input
-
-    //need anti-cheat???
+    if (reply.toLowerCase() === `yes`) console.log(`Awesome!`);
+    //break;
   }
 
   let numGuess = 0;
   let guess = randNum(min, max);
+  console.log(`I am Sam`);
   reply = await ask(`Is your number ${await guess}?\n>_`);
   numGuess += 1;
-  //console.log(`I am Sam`);
-  while (reply.toLowerCase() === `yes` || `no`) {
-    //console.log(`Sam I am`);
-    while (reply.toLowerCase() !== `yes` || `no`) {
-      //console.log(`I like green eggs and ham`);
+  // if (reply.toLowerCase() === `yes`) {
+  //   console.log(`Sam I am`);
+  //   reply = await ask(`Sorry, was your number ${await guess}? (Yes or No)\n>_`);
+  // }
+  while (reply.toLowerCase() !== `yes`) {
+    if (reply.toLowerCase() !== `no`) {
+      console.log(`Would you like green eggs and ham?`);
       reply = await ask(
-        `Sorry, was your number ${await guess}? (Yes or No)\n>_`
+        `Sorry, I didn't catch that. Is your number ${await guess}?\n>_`
       );
+      //break;
+    } else {
       break;
     }
-    if (reply.toLowerCase() === `no`) {
-      numGuess += 1;
+  }
+  if (reply.toLowerCase() === `yes`) {
+    console.log(`I got it first try! Your number is ${guess}!`);
+    process.exit();
+  }
+  if (reply.toLowerCase() === `no`) {
+    numGuess += 1;
+
+    //need program to redefine randNum parameters
+    //console.log(`I would not like green eggs and ham`);
+    while (reply.toLowerCase() !== `higher` || `lower`) {
+      // reply = await ask(
+      //   `Sorry, I didn't catch that. Is your number Higher or Lower than ${await guess}?\n>_`
+      // );
       reply = await ask(`Is my guess Higher or Lower than your number?\n>_`);
-      //need program to redefine randNum parameters
-      console.log(`I am Sam`);
-      while (reply.toLowerCase() === `higher`) {
+      console.log(`I would not eat it in a box`);
+      if (reply.toLowerCase() === `higher`) {
         max = guess;
-        // console.log(guess);
-        // console.log(max);
         guess = Math.floor((max + min) / 2);
-        //guess = randNum(min, max)
-        //console.log(await guess);
-        if (max <= reply) {
-          reply = await ask(`Are you sure?\n>_`);
-        } else {
-          reply = await ask(`Is your number ${await guess}?\n>_`);
-          numGuess += 1;
-        }
-      }
-      while (reply.toLowerCase() === `lower`) {
-        min = guess;
-        guess = Math.floor((max + min) / 2);
-        //console.log(await guess);
         reply = await ask(`Is your number ${await guess}?\n>_`);
         numGuess += 1;
-      }
-      //      while (reply.toLowerCase() !== `higher` || `lower`) {
-
-      //    }
-    } else {
-      if (reply.toLowerCase() === `yes`) {
-        console.log(
-          `I did it! Your number was ${guess} and I got it first try!`
-        );
-        process.exit();
+        if (reply.toLowerCase() === `yes`) {
+          console.log(
+            `I did it! Your number was ${guess} and it took me ${numGuess} tries to guess it!`
+          );
+          process.exit();
+        }
+      } else {
+        if (reply.toLowerCase() === `lower`) {
+          console.log(`I do not like them Sam I am`);
+          min = guess;
+          guess = Math.floor((max + min) / 2);
+          //console.log(await guess);
+          reply = await ask(`Is your number ${await guess}?\n>_`);
+          numGuess += 1;
+          if (reply.toLowerCase() === `yes`) {
+            console.log(
+              `I did it! Your number was ${guess} and it took me ${numGuess} tries to guess it!`
+            );
+            process.exit();
+          }
+        }
       }
     }
   }
-  // if (reply === `yes`) {
-  //
-  // }
 }
