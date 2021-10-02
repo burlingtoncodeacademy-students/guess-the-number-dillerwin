@@ -32,53 +32,50 @@ async function start() {
     `Let's play a game where you (human) make up a number and I (computer) try to guess it!`
   );
   //here is where I put the range adjuster
-  let maxInit = await ask(`\nWhat do you want our range to be?`);
+  let maxInit = await ask(`\nWhat do you want our range to be?\n>_`);
   let max = parseFloat(maxInit);
-  while (isNaN(maxInit)) {
-    maxInit = await ask(`Sorry, can you please enter a number?`);
+  /* had problem where no input throws NaN but through argument as truthy, fixed by changing while(isNaN(maxInit)) to while (isNaN(max))
+  and added max = parseFloat(maxInit) below to re-parse*/
+  while (isNaN(max)) {
+    maxInit = await ask(`Sorry, can you please enter a number?\n>_`);
     max = parseFloat(maxInit);
   }
   // assigning reply, beginning initial questions
   let reply = await ask(
     `\nHave you thought of a number between 1 and ${max}? (Yes or No)\n>_`
   );
-  //console.log(`Hello, I am here`);
   if (reply.toLowerCase() !== `yes`) {
-    //console.log(`I am Sam`);
     if (reply.toLowerCase() !== `no`) {
-      //catch for non yes/no answers/miskeys
+      //catch for non yes/no answers or miskeys
       reply = await ask(
-        `Sorry, I didn't catch that. Let's try again:\nHave you thought of a number between 1 and 10? (Yes or No)\n>_`
+        `Sorry, I didn't catch that. Let's try again:\nHave you thought of a number between 1 and ${max}? (Yes or No)\n>_`
       );
     } else {
       // sarcastic ragequit
       while (reply === `no`) {
-        //console.log(`Sam I am`);
         if (reply.toLowerCase() === `yes`) {
           break;
         } else {
-          //console.log(`Would you like green eggs and ham?`);
           // for people who refuse to say yes
           while (reply.toLowerCase() === `no`) {
             let count = 0;
             while (count < 4) {
               count += 1;
-              while (reply.toLowerCase() !== `yes`) {
-                if (reply.toLowerCase() === `no`) {
-                  //console.log(`I do not like green eggs and ham.`);
+                while (reply.toLowerCase() === `no`) {
+                  console.log(`eyo`)
                   if (count === 1) {
                     count += 1;
                     console.log(`Don't worry, I can wait...`);
                     await sleep(500);
                     reply = await ask(
-                      `How about now? Do you have a number between 1 and 100?\n>_`
+                      `How about now? Do you have a number between 1 and ${max}?\n>_`
                     );
                   } else {
                     if (count === 2) {
                       await sleep(1000);
                       count += 1;
                       reply = await ask(
-                        `Do you have a number between 1 and 100 now?\n>_`
+                        `Do you have a number between 1 and ${max} now?\n>_`
                       );
                     } else {
                       if (count === 3) {
@@ -91,7 +88,7 @@ async function start() {
                           count += 1;
                           console.log(`Okay, come one, we don't have all day.`);
                           reply = await ask(
-                            `Did you pick a number between 1 and 100?\n>_`
+                            `Did you pick a number between 1 and ${max}?\n>_`
                           );
                         } else {
                           if (reply.toLowerCase() === `no`) {
@@ -109,7 +106,6 @@ async function start() {
                   //   console.log(`Awesome!`);
                   //   break;
                 }
-              }
             }
           }
         }
@@ -117,17 +113,15 @@ async function start() {
     }
     //exit to actual guessing game
     if (reply.toLowerCase() === `yes`) console.log(`Awesome!`);
-    //break;
   }
 
   let numGuess = 0;
   let guess = randNum(min, max);
-  //console.log(`I am Sam`);
   reply = await ask(`Is your number ${await guess}?\n>_`);
   // numGuess += 1;
   while (reply.toLowerCase() !== `yes`) {
     if (reply.toLowerCase() !== `no`) {
-      console.log(`Would you like green eggs and ham?`);
+      //console.log(`Would you like green eggs and ham?`);
       reply = await ask(
         `Sorry, I didn't catch that. Is your number ${await guess}?\n>_`
       );
@@ -140,11 +134,9 @@ async function start() {
     process.exit();
   }
   if (reply.toLowerCase() === `no`) {
-    numGuess += 1;
-
     while (reply.toLowerCase() !== `higher` || `lower`) {
       reply = await ask(`Is my guess Higher or Lower than your number?\n>_`);
-      //console.log(`I would not eat it in a box`);
+      console.log(`I do not like them with a mouse`);
       if (reply.toLowerCase() === `higher`) {
         max = guess;
         guess = Math.floor((max + min) / 2);
@@ -158,7 +150,7 @@ async function start() {
         }
       } else {
         if (reply.toLowerCase() === `lower`) {
-          console.log(`I do not like them Sam I am`);
+          console.log(`I do not like them here or there`);
           min = guess;
           guess = Math.floor((max + min) / 2);
           //console.log(await guess);
