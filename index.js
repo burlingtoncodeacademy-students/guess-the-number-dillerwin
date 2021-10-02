@@ -44,13 +44,13 @@ async function start() {
   let reply = await ask(
     `\nHave you thought of a number between 1 and ${max}? (Yes or No)\n>_`
   );
-  if (reply.toLowerCase() !== `yes`) {
+  while (reply.toLowerCase() !== `yes`) {
     if (reply.toLowerCase() !== `no`) {
       //catch for non yes/no answers or miskeys
       reply = await ask(
         `Sorry, I didn't catch that. Let's try again:\nHave you thought of a number between 1 and ${max}? (Yes or No)\n>_`
       );
-    } else {
+    //} else {
       // sarcastic ragequit
       while (reply === `no`) {
         if (reply.toLowerCase() === `yes`) {
