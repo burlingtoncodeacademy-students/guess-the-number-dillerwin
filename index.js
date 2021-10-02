@@ -44,82 +44,82 @@ async function start() {
   let reply = await ask(
     `\nHave you thought of a number between 1 and ${max}? (Yes or No)\n>_`
   );
-  // `no` throwing infinite loop?
+  // `no` throwing infinite loop? -- fixed. I'm not sure why, but it's working so ¯\_(ツ)_/¯
   while (reply.toLowerCase() !== `yes`) {
-    console.log(`eyyy`)
+    // await sleep(3000);
     let count = 0;
     if (reply.toLowerCase() === `no`) {
-      if (reply.toLowerCase() !== `no`) {
-        //catch for non yes/no answers or miskeys
-        reply = await ask(
-          `Sorry, I didn't catch that. Let's try again:\nHave you thought of a number between 1 and ${max}? (Yes or No)\n>_`
-        );
-        count += 1;
-        //} else {
-        // sarcastic ragequit
-        while (reply === `no`) {
-          if (reply.toLowerCase() === `yes`) {
-            break;
-          } else {
-            // for people who refuse to say yes
-            while (reply.toLowerCase() === `no`) {
-              while (count < 4) {
-                count += 1;
-                while (reply.toLowerCase() === `no`) {
-                  console.log(`eyo`);
-                  if (count === 1) {
+      //console.log(`We here`);
+      // sarcastic ragequit
+      while (reply === `no`) {
+        //console.log(`Are we there yet?`);
+        if (reply.toLowerCase() === `yes`) {
+          break;
+        } else {
+          // for people who refuse to say yes
+          while (reply.toLowerCase() === `no`) {
+            while (count < 4) {
+              count += 1;
+              while (reply.toLowerCase() === `no`) {
+                //console.log(`eyo`);
+                if (count === 1) {
+                  count += 1;
+                  console.log(`Don't worry, I can wait...`);
+                  await sleep(500);
+                  reply = await ask(
+                    `How about now? Do you have a number between 1 and ${max}?\n>_`
+                  );
+                } else {
+                  if (count === 2) {
+                    await sleep(1000);
                     count += 1;
-                    console.log(`Don't worry, I can wait...`);
-                    await sleep(500);
                     reply = await ask(
-                      `How about now? Do you have a number between 1 and ${max}?\n>_`
+                      `Do you have a number between 1 and ${max} now?\n>_`
                     );
                   } else {
-                    if (count === 2) {
-                      await sleep(1000);
+                    if (count === 3) {
                       count += 1;
-                      reply = await ask(
-                        `Do you have a number between 1 and ${max} now?\n>_`
-                      );
+                      console.log(`No problem, I promise I'm patient...`);
+                      await sleep(1000);
+                      reply = await ask(`How about now?\n>_`);
                     } else {
-                      if (count === 3) {
+                      if (count === 4) {
                         count += 1;
-                        console.log(`No problem, I promise I'm patient...`);
-                        await sleep(1000);
-                        reply = await ask(`How about now?\n>_`);
+                        console.log(`Okay, come one, we don't have all day.`);
+                        reply = await ask(
+                          `Did you pick a number between 1 and ${max}?\n>_`
+                        );
                       } else {
-                        if (count === 4) {
-                          count += 1;
-                          console.log(`Okay, come one, we don't have all day.`);
-                          reply = await ask(
-                            `Did you pick a number between 1 and ${max}?\n>_`
-                          );
-                        } else {
-                          if (reply.toLowerCase() === `no`) {
-                            console.log(`Well fine, be that way`);
-                            process.exit();
-                          }
+                        if (reply.toLowerCase() === `no`) {
+                          console.log(`Well fine, be that way`);
+                          process.exit();
                         }
                       }
                     }
                   }
-                  // } else {
-                  //   break;
-                  // }
-                  // if (reply.toLowerCase() === `yes`) {
-                  //   console.log(`Awesome!`);
-                  //   break;
                 }
+                // } else {
+                //   break;
+                // }
+                // if (reply.toLowerCase() === `yes`) {
+                //   console.log(`Awesome!`);
+                //   break;
               }
             }
+            // }
           }
         }
       }
+    } else {
+      reply = await ask(
+        `Sorry, I didn't catch that. Let's try again:\nHave you thought of a number between 1 and ${max}? (Yes or No)\n>_`
+      );
+      count += 1;
     }
     //exit to actual guessing game
     if (reply.toLowerCase() === `yes`) console.log(`Awesome!`);
+    await sleep(500);
   }
-
   let numGuess = 0;
   let guess = randNum(min, max);
   reply = await ask(`Is your number ${await guess}?\n>_`);
@@ -141,12 +141,25 @@ async function start() {
   if (reply.toLowerCase() === `no`) {
     while (reply.toLowerCase() !== `higher` || `lower`) {
       reply = await ask(`Is my guess Higher or Lower than your number?\n>_`);
-      console.log(`I do not like them with a mouse`);
       if (reply.toLowerCase() === `higher`) {
         max = guess;
         guess = Math.floor((max + min) / 2);
         reply = await ask(`Is your number ${await guess}?\n>_`);
         numGuess += 1;
+        if (max >= min) {
+          reply = await ask(`Are you sure about that?\n>_`);
+          if (reply.toLowerCase() === `yes`) {
+            console.log(`Sorry, I don't play with cheaters.`);
+            process.exit();
+          } else {
+            if (reply.toLowerCase() === `no`) {
+              console.log(
+                `I thought not. Your number is ${await guess}. Shame on you for trying to cheat.`
+              );
+              process.exit();
+            }
+          }
+        }
         if (reply.toLowerCase() === `yes`) {
           console.log(
             `I did it! Your number was ${guess} and it took me ${numGuess} tries to guess it!`
@@ -155,12 +168,25 @@ async function start() {
         }
       } else {
         if (reply.toLowerCase() === `lower`) {
-          console.log(`I do not like them here or there`);
           min = guess;
           guess = Math.floor((max + min) / 2);
           //console.log(await guess);
           reply = await ask(`Is your number ${await guess}?\n>_`);
           numGuess += 1;
+          if (max <= min) {
+            reply = await ask(`Are you sure about that?\n>_`);
+            if (reply.toLowerCase() === `yes`) {
+              console.log(`Sorry, I don't play with cheaters.`);
+              process.exit();
+            } else {
+              if (reply.toLowerCase() === `no`) {
+                console.log(
+                  `I thought not. Your number is ${await guess}. Shame on you for trying to cheat.`
+                );
+                process.exit();
+              }
+            }
+          }
           if (reply.toLowerCase() === `yes`) {
             console.log(
               `I did it! Your number was ${guess} and it took me ${numGuess} tries to guess it!`
