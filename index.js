@@ -25,22 +25,38 @@ function randNum(min, max) {
 // guessing game as a whole
 start();
 async function start() {
+  // here is the replay option. Logs how many times you've played, asks if you want to play again or not
   let plays = 0;
   async function replay() {
-    while (plays >= 1) {
-      let repeat = await ask(`Do you want to play again?\n>_`);
-      if (repeat.toLowerCase() !== `no`) {
-        console.log(`Awesome! I'll start us from the beginning!\n`);
-        await sleep(500);
-        await start();
-      } else {
+    if (plays > 1) {
+      console.log(`We've played ${plays} times!`);
+      await sleep(250);
+    }
+    let repeat = await ask(`Do you want to play again?\n>_`);
+    while (repeat.toLowerCase() !== `no` || `yes`) {
+      if (repeat.toLowerCase() === `no`) {
         console.log(`Okay! It's been fun playing together!`);
         await sleep(500);
         process.exit();
+      } else {
+        if (repeat.toLowerCase() === `yes`) {
+          console.log(`Awesome! I'll start us from the beginning!\n`);
+          await sleep(500);
+          await start();
+        } else {
+          // mis-key catch, took a hot minute even after making like 4 other lmao
+          while (repeat.toLowerCase() !== `yes` && `no`) {
+            repeat = await ask(
+              `Sorry, I didn't catch that. Do you want to play again?`
+            );
+            break;
+          }
+        }
       }
+      // }
     }
   }
-
+  // starts opening question mini-game
   let min = 1;
   console.log(
     `Let's play a game where you (human) make up a number and I (computer) try to guess it!`
@@ -48,9 +64,11 @@ async function start() {
   //here is where I put the range adjuster
   let maxInit = await ask(`\nWhat do you want our range to be?\n>_`);
   let max = parseFloat(maxInit);
-  /* had problem where no input throws NaN but through argument as truthy, fixed by changing while(isNaN(maxInit)) to while (isNaN(max))
-  and added max = parseFloat(maxInit) below to re-parse*/
+  /* had problem where no input throws NaN but put through argument as truthy,
+  fixed by changing while(isNaN(maxInit)) to while (isNaN(max))
+  and added max = parseFloat(maxInit) below to re-parse to number*/
   while (isNaN(max)) {
+    // NaN catch
     maxInit = await ask(`Sorry, can you please enter a number?\n>_`);
     max = parseFloat(maxInit);
   }
@@ -58,7 +76,7 @@ async function start() {
   let reply = await ask(
     `\nHave you thought of a number between 1 and ${max}? (Yes or No)\n>_`
   );
-  // `no` throwing infinite loop? -- fixed. I'm not sure why, but it's working so ¯\_(ツ)_/¯
+  // `no` throwing infinite loop? -- fixed. I'm not entirely sure what was wrong to being with, but it's working so ¯\_(ツ)_/¯
   while (reply.toLowerCase() !== `yes`) {
     let count = 0;
     if (reply.toLowerCase() === `no`) {
@@ -103,6 +121,7 @@ async function start() {
                       } else {
                         if (reply.toLowerCase() === `no`) {
                           console.log(`Well fine, be that way`);
+                          //rage quit lol
                           process.exit();
                         }
                       }
@@ -115,6 +134,7 @@ async function start() {
         }
       }
     } else {
+      // mis-key catch 1
       reply = await ask(
         `Sorry, I didn't catch that. Let's try again:\nHave you thought of a number between 1 and ${max}? (Yes or No)\n>_`
       );
@@ -124,13 +144,13 @@ async function start() {
     if (reply.toLowerCase() === `yes`) console.log(`Awesome!`);
     await sleep(500);
   }
+  // actual guessing sequence
   let numGuess = 0;
   let guess = randNum(min, max);
   reply = await ask(`Is your number ${await guess}?\n>_`);
-  // numGuess += 1;
+  numGuess += 1;
   while (reply.toLowerCase() !== `yes`) {
     if (reply.toLowerCase() !== `no`) {
-      //console.log(`Would you like green eggs and ham?`);
       reply = await ask(
         `Sorry, I didn't catch that. Is your number ${await guess}?\n>_`
       );
@@ -152,6 +172,7 @@ async function start() {
         guess = Math.floor((max + min) / 2);
         reply = await ask(`Is your number ${await guess}?\n>_`);
         numGuess += 1;
+        // liar catch
         if (max <= min) {
           reply = await ask(`Are you sure about that?\n>_`);
           console.log(`Actually I'm here`);
@@ -184,8 +205,8 @@ async function start() {
           //console.log(await guess);
           reply = await ask(`Is your number ${await guess}?\n>_`);
           numGuess += 1;
+          //liar catch number 2
           if (max <= min) {
-            console.log(`I am here`);
             reply = await ask(`Are you sure about that?\n>_`);
             if (reply.toLowerCase() === `yes`) {
               console.log(`Sorry, I don't play with cheaters.`);
