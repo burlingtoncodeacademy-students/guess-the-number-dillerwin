@@ -24,9 +24,23 @@ function randNum(min, max) {
 
 // guessing game as a whole
 start();
-
 async function start() {
-  //random number generator
+  let plays = 0;
+  async function replay() {
+    while (plays >= 1) {
+      let repeat = await ask(`Do you want to play again?\n>_`);
+      if (repeat.toLowerCase() !== `no`) {
+        console.log(`Awesome! I'll start us from the beginning!\n`);
+        await sleep(500);
+        await start();
+      } else {
+        console.log(`Okay! It's been fun playing together!`);
+        await sleep(500);
+        process.exit();
+      }
+    }
+  }
+
   let min = 1;
   console.log(
     `Let's play a game where you (human) make up a number and I (computer) try to guess it!`
@@ -46,13 +60,10 @@ async function start() {
   );
   // `no` throwing infinite loop? -- fixed. I'm not sure why, but it's working so ¯\_(ツ)_/¯
   while (reply.toLowerCase() !== `yes`) {
-    // await sleep(3000);
     let count = 0;
     if (reply.toLowerCase() === `no`) {
-      //console.log(`We here`);
       // sarcastic ragequit
       while (reply === `no`) {
-        //console.log(`Are we there yet?`);
         if (reply.toLowerCase() === `yes`) {
           break;
         } else {
@@ -98,15 +109,8 @@ async function start() {
                     }
                   }
                 }
-                // } else {
-                //   break;
-                // }
-                // if (reply.toLowerCase() === `yes`) {
-                //   console.log(`Awesome!`);
-                //   break;
               }
             }
-            // }
           }
         }
       }
@@ -136,7 +140,9 @@ async function start() {
   }
   if (reply.toLowerCase() === `yes`) {
     console.log(`I got it first try! Your number is ${guess}!`);
-    process.exit();
+    await sleep(500);
+    plays += 1;
+    replay();
   }
   if (reply.toLowerCase() === `no`) {
     while (reply.toLowerCase() !== `higher` || `lower`) {
@@ -146,8 +152,9 @@ async function start() {
         guess = Math.floor((max + min) / 2);
         reply = await ask(`Is your number ${await guess}?\n>_`);
         numGuess += 1;
-        if (max >= min) {
+        if (max <= min) {
           reply = await ask(`Are you sure about that?\n>_`);
+          console.log(`Actually I'm here`);
           if (reply.toLowerCase() === `yes`) {
             console.log(`Sorry, I don't play with cheaters.`);
             process.exit();
@@ -156,7 +163,9 @@ async function start() {
               console.log(
                 `I thought not. Your number is ${await guess}. Shame on you for trying to cheat.`
               );
-              process.exit();
+              await sleep(500);
+              plays += 1;
+              replay();
             }
           }
         }
@@ -164,7 +173,9 @@ async function start() {
           console.log(
             `I did it! Your number was ${guess} and it took me ${numGuess} tries to guess it!`
           );
-          process.exit();
+          await sleep(500);
+          plays += 1;
+          replay();
         }
       } else {
         if (reply.toLowerCase() === `lower`) {
@@ -174,6 +185,7 @@ async function start() {
           reply = await ask(`Is your number ${await guess}?\n>_`);
           numGuess += 1;
           if (max <= min) {
+            console.log(`I am here`);
             reply = await ask(`Are you sure about that?\n>_`);
             if (reply.toLowerCase() === `yes`) {
               console.log(`Sorry, I don't play with cheaters.`);
@@ -183,7 +195,9 @@ async function start() {
                 console.log(
                   `I thought not. Your number is ${await guess}. Shame on you for trying to cheat.`
                 );
-                process.exit();
+                await sleep(500);
+                plays += 1;
+                replay();
               }
             }
           }
@@ -191,7 +205,9 @@ async function start() {
             console.log(
               `I did it! Your number was ${guess} and it took me ${numGuess} tries to guess it!`
             );
-            process.exit();
+            await sleep(500);
+            plays += 1;
+            replay();
           }
         }
       }
