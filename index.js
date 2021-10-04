@@ -44,10 +44,10 @@ async function start() {
           await sleep(500);
           await start();
         } else {
-          // mis-key catch, took a hot minute even after making like 4 other lmao
+          // mis-key catch, took a hot minute even after making like 4 others lmao
           while (repeat.toLowerCase() !== `yes` && `no`) {
             repeat = await ask(
-              `Sorry, I didn't catch that. Do you want to play again?`
+              `Sorry, I didn't catch that. Do you want to play again?\n>_`
             );
             break;
           }
@@ -234,4 +234,5 @@ async function start() {
       }
     }
   }
+  // will put human-guessing-number game here
 }
