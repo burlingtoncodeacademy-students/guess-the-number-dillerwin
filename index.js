@@ -56,7 +56,7 @@ async function start() {
       // }
     }
   }
-  // starts opening question mini-game
+  // starts opening of computer-guessing-number game
   let min = 1;
   console.log(
     `Let's play a game where you (human) make up a number and I (computer) try to guess it!`
